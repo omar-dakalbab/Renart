@@ -67,7 +67,23 @@ const App = () => {
       <h2 className="text-center text-3xl sm:text-4xl font-light font-avenir">Product List</h2>
       <div className="w-full max-w-5xl mx-auto bg-[#F8F8F8] border border-gray-200 rounded-xl p-6 grid sm:grid-cols-2 gap-6">
         <div>
-          <label className="block mb-2 text-sm font-medium text-gray-600">Price Range: ${selectedPrice[0].toFixed(2)} - ${selectedPrice[1].toFixed(2)}</label>
+          <label className="block mb-2 text-sm font-medium text-gray-600">
+            Price Range:&nbsp;
+            {new Intl.NumberFormat(undefined, {
+              style: 'currency',
+              currency: "USD",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }).format(selectedPrice[0])}
+            {" – "}
+            {new Intl.NumberFormat(undefined, {
+              style: 'currency',
+              currency: "USD",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }).format(selectedPrice[1])}
+          </label>
+
           <input
             type="range"
             min={minPrice}
