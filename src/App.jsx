@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ProductsData from './data/products.json';
 import ProductCard from './components/ProductCard';
+import { getGoldPrice } from './api/getGoldPrice';
 
 const App = () => {
   const containerRef = useRef(null);
@@ -26,14 +27,23 @@ const App = () => {
 
   const getProducts = async () => {
     try {
-      await new Promise((r) => setTimeout(r, 500));
-      const allPrices = ProductsData.map((p) => p.price);
-      const min = Math.min(...allPrices);
-      const max = Math.max(...allPrices);
+      const goldPrice = await getGoldPrice();
+
+      if (!goldPrice) throw new Error("Gold price unavailable");
+
+      const enhanced = ProductsData.map((product) => {
+        const calculatedPrice = (product.popularityScore * 5 + 1) * (product.weight || 1) * goldPrice;
+        return { ...product, price: calculatedPrice };
+      });
+
+      const prices = enhanced.map((p) => p.price);
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+
       setMinPrice(min);
       setMaxPrice(max);
       setSelectedPrice([min, max]);
-      setProducts(ProductsData);
+      setProducts(enhanced);
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
@@ -57,7 +67,7 @@ const App = () => {
       <h2 className="text-center text-3xl sm:text-4xl font-light font-avenir">Product List</h2>
       <div className="w-full max-w-5xl mx-auto bg-[#F8F8F8] border border-gray-200 rounded-xl p-6 grid sm:grid-cols-2 gap-6">
         <div>
-          <label className="block mb-2 text-sm font-medium text-gray-600">Price Range: ${selectedPrice[0]} - ${selectedPrice[1]}</label>
+          <label className="block mb-2 text-sm font-medium text-gray-600">Price Range: ${selectedPrice[0].toFixed(2)} - ${selectedPrice[1].toFixed(2)}</label>
           <input
             type="range"
             min={minPrice}
@@ -92,6 +102,7 @@ const App = () => {
           </select>
         </div>
       </div>
+
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="w-12 h-12 border-4 border-gray-200 border-t-[#E6CA97] rounded-full animate-spin" />
@@ -117,9 +128,10 @@ const App = () => {
                 className="flex-none scroll-snap-align-start w-[80%] sm:w-[45%] md:w-[30%] lg:w-[22%]"
               >
                 <ProductCard
+                  product={p}
                   title={p.name}
-                  price={p.price}
                   currency="USD"
+                  price={p.price.toFixed(2)}
                   images={p.images}
                   colors={[
                     { color: '#E6CA97', name: 'Yellow Gold' },
