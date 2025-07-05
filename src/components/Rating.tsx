@@ -34,7 +34,7 @@ const Rating: FC<{ rating?: number }> = memo(({ rating = 0 }) => {
                     fill="currentColor"
                 />
             ))}
-            <span className="ml-2 text-[14px] font-avenir font-[book] text-gray-700">
+            <span className="ml-2 text-[14px] font-avenir font-book text-gray-700">
                 {rating.toFixed(1)} / 5
             </span>
         </div>

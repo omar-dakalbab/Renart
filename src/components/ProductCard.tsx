@@ -25,11 +25,15 @@ const ProductCard: FC<ProductCardProps> = memo(({
 
     return (
         <div className="max-w-xs bg-white overflow-hidden group">
-            <div className="relative">
+            <div className="relative w-60 h-60">
                 <img
                     src={images[colorKeys[currentIndex]]}
                     alt={`${title} in ${colorKeys[currentIndex]}`}
-                    className="w-60 h-60 object-cover rounded-xl"
+                    loading="lazy"
+                    decoding="async"
+                    width={240}
+                    height={240}
+                    className="w-full h-full object-cover rounded-xl"
                 />
             </div>
             <div className="px-1 py-3 space-y-2">
@@ -55,7 +59,7 @@ const ProductCard: FC<ProductCardProps> = memo(({
                         />
                     ))}
                 </div>
-                <p className="mt-2 text-[12px] font-avenir font-[book] text-gray-600">{name}</p>
+                <p className="mt-2 text-[12px] font-avenir font-book text-gray-600">{name}</p>
                 <Rating rating={rating} />
             </div>
         </div>
